@@ -1,0 +1,96 @@
+name: CD
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  NODE_VERSION: "22"
+  PNPM_VERSION: "9"
+
+jobs:
+  deploy-preview:
+    name: Deploy Preview (Vercel)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == "push" && github.ref != "refs/heads/main"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+
+      - name: Install dependencies (web)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        working-directory: apps/web
+
+      - name: Build Vite
+        run: pnpm build
+        working-directory: apps/web
+
+      - name: Deploy to Vercel Preview
+        uses: amondnet/vercel-action@v25
+        if: env.VERCEL_TOKEN != "" && env.VERCEL_ORG_ID != "" && env.VERCEL_PROJECT_ID != ""
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod=false"
+          working-directory: apps/web
+
+  deploy-production:
+    name: Deploy Production (Vercel)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    if: github.event_name == "push" && github.ref == "refs/heads/main"
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+
+      - name: Install dependencies (web)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+        working-directory: apps/web
+
+      - name: Build Vite
+        run: pnpm build
+        working-directory: apps/web
+
+      - name: Deploy to Vercel Production
+        uses: amondnet/vercel-action@v25
+        if: env.VERCEL_TOKEN != "" && env.VERCEL_ORG_ID != "" && env.VERCEL_PROJECT_ID != ""
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "--prod=true"
+          working-directory: apps/web
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true

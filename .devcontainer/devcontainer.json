@@ -1,0 +1,16 @@
+{
+  "name": "PRISMA Dev (Codespaces)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/node:1": { "version": "24" },
+    "ghcr.io/devcontainers/features/rust:1": { "profile": "default" }
+  },
+  "postCreateCommand": "cd apps/desktop && npm install --ignore-scripts && cd src-tauri && cargo fetch",
+  "customizations": {
+    "vscode": {
+      "extensions": ["rust-lang.rust-analyzer", "tauri-apps.tauri-vscode", "esbenp.prettier-vscode", "dbaeumer.vscode-eslint"]
+    }
+  },
+  "forwardPorts": [5173],
+  "portsAttributes": { "5173": { "label": "Vite dev server" } }
+}

@@ -1,0 +1,72 @@
+[package]
+name = "prisma"
+version = "0.1.0"
+description = "PRISMA - Aplicativo desktop acadêmico com assistente LIA"
+authors = ["nanoMuse"]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+# Tauri core
+tauri = { version = "2.0", features = [
+    "tray-icon",
+    "image",
+    "rustls-tls",
+] }
+tauri-plugin-sql = { version = "2.0", features = ["sqlite"] }
+tauri-plugin-store = "2.0"
+tauri-plugin-opener = "2.0"
+tauri-plugin-clipboard-manager = "2.0"
+tauri-plugin-dialog = "2.0"
+tauri-plugin-fs = "2.0"
+tauri-plugin-shell = "2.0"
+tauri-plugin-notification = "2.0"
+tauri-plugin-global-shortcut = "2.0"
+tauri-plugin-window-state = "2.0"
+
+# Database
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "chrono", "uuid", "json", "migrate"] }
+tokio = { version = "1.40", features = ["full"] }
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.8", features = ["serde", "v7"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+anyhow = "1.0"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt", "json"] }
+tracing-appender = "0.2"
+
+# Security
+zeroize = "1.8"
+secrecy = "0.8"
+argon2 = "0.5"
+ring = "0.17"
+base64 = "0.22"
+sha2 = "0.10"
+
+# Utilities
+walkdir = "2"
+mime = "0.3"
+mime_guess = "2.0"
+url = "2.5"
+percent-encoding = "2.3"
+directories = "5.0"
+tempfile = "3.10"
+
+# Async
+futures = "0.3"
+async-trait = "0.1"
+
+# Configuration
+config = "0.14"
+toml = "0.8"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true

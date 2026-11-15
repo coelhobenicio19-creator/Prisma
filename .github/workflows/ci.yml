@@ -1,0 +1,170 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: '22'
+
+jobs:
+  lint-and-typecheck:
+    name: Lint + TypeCheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies (web)
+        run: npm ci --ignore-scripts
+        working-directory: apps/web
+
+      - name: TypeCheck (frontend)
+        run: npx tsc --noEmit
+        working-directory: apps/web
+
+      - name: TypeCheck (API serverless)
+        run: npx tsc -p tsconfig.api.json
+        working-directory: apps/web
+
+      - name: Lint (ESLint)
+        run: npm run lint
+        working-directory: apps/web
+
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: lint-and-typecheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies (web)
+        run: npm ci --ignore-scripts
+        working-directory: apps/web
+
+      - name: Build Vite
+        run: npm run build
+        working-directory: apps/web
+
+  test-unit:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: lint-and-typecheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies (web)
+        run: npm ci --ignore-scripts
+        working-directory: apps/web
+
+      - name: Run unit tests
+        run: npm run test:unit
+        working-directory: apps/web
+
+  test-integration:
+    name: Integration Tests (API mock)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: lint-and-typecheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies (web)
+        run: npm ci --ignore-scripts
+        working-directory: apps/web
+
+      - name: Run API integration tests (mock)
+        run: npm run test:api
+        working-directory: apps/web
+        env:
+          USE_MOCK_DB: '1'
+
+  secret-scan:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: TruffleHog scan
+        uses: trufflesecurity/trufflehog@v3
+        with:
+          path: ./
+          base: main
+          head: HEAD
+          extra_args: --fail --no-verification
+
+  audit:
+    name: Dependency Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install dependencies (web)
+        run: npm ci --ignore-scripts
+        working-directory: apps/web
+
+      - name: Audit dependencies
+        run: npm audit --prod --audit-level high
+        working-directory: apps/web
+
+  verify-deps:
+    name: Verify Lockfile
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'\n          cache-dependency-path: apps/web/package-lock.json
+
+      - name: Install and verify
+        run: npm ci --ignore-scripts && npm list --depth=0
+        working-directory: apps/web
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true

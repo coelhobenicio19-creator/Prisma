@@ -1,0 +1,183 @@
+/** @type {import('tailwindcss').Config} */
+
+// Cores semânticas como CSS vars com suporte a modificador de opacidade (/10, /20, /30...)
+// WebView2 157 (Chromium) suporta color-mix.
+function cssVar(name) {
+  return ({ opacityValue }) =>
+    opacityValue === undefined
+      ? `var(${name})`
+      : `color-mix(in srgb, var(${name}) ${opacityValue * 100}%, transparent)`;
+}
+
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        // Graphite Academic Palette
+        graphite: {
+          50: '#f0f0ef',
+          100: '#e0e0de',
+          200: '#c8c8c4',
+          300: '#a8a8a0',
+          400: '#8a8a80',
+          500: '#6d6d64',
+          600: '#55554d',
+          700: '#44443e',
+          800: '#383832',
+          900: '#2e2e29',
+          950: '#1a1a17',
+        },
+        sage: {
+          50: '#f0f4f3',
+          100: '#dce7e5',
+          200: '#b9cfcb',
+          300: '#8aa7a1',   // Primary accent
+          400: '#6b8d85',
+          500: '#54756d',
+          600: '#445e56',
+          700: '#384a43',
+          800: '#303e38',
+          900: '#2a3530',
+        },
+        ivory: {
+          50: '#fdfdfb',
+          100: '#fafaf6',
+          200: '#f4f4ec',
+          300: '#ebeadd',
+          400: '#e0e0ca',
+          500: '#d0d0b2',
+          600: '#b8b892',
+          700: '#9a9a74',
+          800: '#80805f',
+          900: '#6b6b51',
+        },
+        // Semantic colors (CSS variables, theme-aware, com suporte a /opacity)
+        'bg-primary': cssVar('--color-bg-primary'),
+        'bg-secondary': cssVar('--color-bg-secondary'),
+        'bg-tertiary': cssVar('--color-bg-tertiary'),
+        surface: cssVar('--color-surface'),
+        'surface-hover': cssVar('--color-surface-hover'),
+        'surface-active': cssVar('--color-surface-active'),
+        'surface-border': cssVar('--color-border'),
+        border: cssVar('--color-border'),
+        'border-light': cssVar('--color-border-light'),
+        'text-primary': cssVar('--color-text-primary'),
+        'text-secondary': cssVar('--color-text-secondary'),
+        'text-muted': cssVar('--color-text-muted'),
+        'text-inverse': cssVar('--color-text-inverse'),
+        accent: cssVar('--color-accent'),
+        'accent-hover': cssVar('--color-accent-hover'),
+        'accent-light': cssVar('--color-accent-light'),
+        'accent-bg': cssVar('--color-accent-bg'),
+        'accent-dark': '#384A43',
+        success: cssVar('--color-success'),
+        warning: cssVar('--color-warning'),
+        error: cssVar('--color-error'),
+        'error-dark': '#9E4545',
+        info: cssVar('--color-info'),
+      },
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-in': {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.2s ease-out',
+        'slide-in': 'slide-in 0.25s ease-out',
+      },
+      fontFamily: {
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],
+      },
+      fontSize: {
+        'xs': ['0.75rem', { lineHeight: '1.5' }],
+        'sm': ['0.875rem', { lineHeight: '1.5' }],
+        'base': ['1rem', { lineHeight: '1.6' }],
+        'lg': ['1.125rem', { lineHeight: '1.6' }],
+        'xl': ['1.25rem', { lineHeight: '1.5' }],
+        '2xl': ['1.5rem', { lineHeight: '1.4' }],
+        '3xl': ['1.875rem', { lineHeight: '1.3' }],
+        '4xl': ['2.25rem', { lineHeight: '1.2' }],
+      },
+      spacing: {
+        '0': '0',
+        '1': '0.25rem',
+        '2': '0.5rem',
+        '3': '0.75rem',
+        '4': '1rem',
+        '5': '1.25rem',
+        '6': '1.5rem',
+        '8': '2rem',
+        '10': '2.5rem',
+        '12': '3rem',
+        '16': '4rem',
+        '20': '5rem',
+        '24': '6rem',
+      },
+      borderRadius: {
+        'none': '0',
+        'sm': '0.25rem',
+        'DEFAULT': '0.375rem',
+        'md': '0.5rem',
+        'lg': '0.75rem',
+        'xl': '1rem',
+        '2xl': '1.5rem',
+        'full': '9999px',
+      },
+      boxShadow: {
+        'sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'DEFAULT': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'md': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'lg': '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'xl': '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'inner': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+      },
+      transitionDuration: {
+        '75': '75ms',
+        '100': '100ms',
+        '150': '150ms',
+        '200': '200ms',
+        '300': '300ms',
+        '500': '500ms',
+        '700': '700ms',
+        '1000': '1000ms',
+      },
+      transitionTimingFunction: {
+        'ease-in-out': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        'ease-out': 'cubic-bezier(0, 0, 0.2, 1)',
+        'ease-in': 'cubic-bezier(0.4, 0, 1, 1)',
+      },
+      zIndex: {
+        '0': '0',
+        '10': '10',
+        '20': '20',
+        '30': '30',
+        '40': '40',
+        '50': '50',
+        '60': '60',
+        '70': '70',
+        '80': '80',
+        '90': '90',
+        'dropdown': '100',
+        'sticky': '200',
+        'fixed': '300',
+        'modal-backdrop': '400',
+        'modal': '500',
+        'popover': '600',
+        'tooltip': '700',
+        'toast': '800',
+      },
+    },
+  },
+  plugins: [],
+}

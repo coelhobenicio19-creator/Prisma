@@ -1,0 +1,77 @@
+# ===== PRISMA .gitignore =====
+# Dependências regeneráveis
+node_modules/
+**/node_modules/
+
+# Builds e artefatos
+apps/desktop/dist/
+**/dist/
+src-tauri/target/
+**/target/
+*.exe
+*.msi
+*.dmg
+*.AppImage
+*.deb
+*.app
+bundle/
+
+# Caches locais
+.npm-cache/
+**/.npm-cache/
+.cache/
+.parcel-cache/
+
+# Rust
+**/Cargo.lock
+!apps/desktop/src-tauri/Cargo.lock
+
+# Credenciais e segredos — NUNCA commitar
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+**/secrets/
+**/credentials/
+
+# Bancos de dados locais e dados pessoais
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+**/data/
+**/backups/
+
+# Logs e temporários
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Relatórios locais de build (regeneráveis)
+BUILD_REPORT.md
+TEST_REPORT.md
+KNOWN_ISSUES.md
+
+# Downloads temporários
+*.zip
+*.7z
+*.tar.gz
+apps/web/tests/.build/

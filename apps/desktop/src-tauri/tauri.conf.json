@@ -1,0 +1,172 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "PRISMA",
+  "version": "0.1.0",
+  "identifier": "com.nanomuse.prisma",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "PRISMA",
+        "label": "main",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 1024,
+        "minHeight": 720,
+        "center": true,
+        "resizable": true,
+        "fullscreen": false,
+        "decorations": true,
+        "transparent": false,
+        "visible": false,
+        "focus": true,
+        "theme": "Dark"
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' data: blob:; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://api.nvidia.com wss://api.nvidia.com; frame-src 'self'; worker-src 'self' blob:"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "icons/nsis-header.bmp",
+        "licenseFile": "",
+        "allowElevation": false,
+        "perMachine": false,
+        "displayLanguage": "Portuguese (Brazil)",
+        "template": "",
+        "webviewInstallMode": {
+          "type": "downloadBootstrapper",
+          "silent": true
+        }
+      },
+      "webviewFixedRuntimePath": "",
+      "certificateThumbprint": "",
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "longDescription": "PRISMA - Aplicativo desktop acadêmico completo com assistente LIA",
+    "shortDescription": "PRISMA + LIA",
+    "publisher": "nanoMuse",
+    "copyright": "2024 nanoMuse"
+  },
+  "plugins": {
+    "sql": {
+      "preload": ["sqlite:prisma.db"]
+    },
+    "store": {
+      "autoSave": true,
+      "saveInterval": 5000
+    },
+    "fs": {
+      "scope": {
+        "allowed": ["$APPDATA/PRISMA/**", "$TEMP/PRISMA/**"],
+        "denied": []
+      }
+    },
+    "shell": {
+      "scope": {
+        "allowed": [],
+        "denied": []
+      }
+    },
+    "dialog": {
+      "open": true,
+      "save": true,
+      "message": true,
+      "ask": true,
+      "confirm": true
+    },
+    "notification": {
+      "show": true
+    },
+    "globalShortcut": {
+      "register": true,
+      "unregister": true
+    },
+    "clipboardManager": {
+      "readText": true,
+      "writeText": true
+    }
+  },
+  "allowlist": {
+    "all": false,
+    "fs": {
+      "all": false,
+      "readFile": true,
+      "writeFile": true,
+      "readDir": true,
+      "copyFile": true,
+      "createDir": true,
+      "removeFile": true,
+      "removeDir": true,
+      "scope": ["$APPDATA/PRISMA/**", "$TEMP/PRISMA/**"]
+    },
+    "dialog": {
+      "all": false,
+      "open": true,
+      "save": true,
+      "message": true,
+      "ask": true,
+      "confirm": true
+    },
+    "shell": {
+      "all": false,
+      "open": true
+    },
+    "path": {
+      "all": false,
+      "resolve": true,
+      "appDir": true,
+      "appDataDir": true,
+      "tempDir": true
+    },
+    "window": {
+      "all": false,
+      "create": true,
+      "close": true,
+      "minimize": true,
+      "maximize": true,
+      "unmaximize": true,
+      "show": true,
+      "hide": true,
+      "setTitle": true,
+      "setFullscreen": true
+    },
+    "notification": {
+      "all": false,
+      "show": true
+    },
+    "clipboard": {
+      "all": false,
+      "readText": true,
+      "writeText": true
+    },
+    "globalShortcut": {
+      "all": false,
+      "register": true,
+      "unregister": true
+    },
+    "protocol": {
+      "all": false,
+      "asset": true,
+      "assetScope": ["**"]
+    }
+  }
+}
