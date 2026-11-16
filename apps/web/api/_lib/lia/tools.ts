@@ -25,7 +25,7 @@ export interface ToolResult {
 export async function executeToolCall(
   call: ToolCall,
   profileId: string,
-  userId: string
+  _userId: string
 ): Promise<ToolResult> {
   let args: any = {};
   try { args = JSON.parse(call.function.arguments || '{}'); } catch { /* args vazio */ }

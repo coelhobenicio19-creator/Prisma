@@ -3,8 +3,6 @@
 // Só registra fatos com fonte citada; nunca inventa.
 // ============================================================
 
-import { db } from '../db';
-
 const SUPABASE_URL = process.env.SUPABASE_URL ?? '';
 const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
 const USE_MOCK = process.env.USE_MOCK_DB === '1' || !SUPABASE_URL;
