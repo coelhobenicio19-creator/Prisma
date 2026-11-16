@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState, useRef } from 'react';
 import { Play, Pause, Volume2, Check, Loader2, Star } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
@@ -42,8 +42,6 @@ const VOICES: VoiceOption[] = [
     previewText: 'Esta é a Thalita em velocidade mais rápida para revisões ágeis.',
   },
 ];
-
-const EDGE_TTS_BASE = 'https://api.edge-tts.com/v1/voices'; // placeholder, usamos endpoint direto
 
 // Edge TTS endpoint público (não oficial, mas funciona)
 const EDGE_SYNTHESIZE = (voice: string, text: string) =>
@@ -91,11 +89,11 @@ export function VoicePreviewPage() {
 
       if (voice.provider === 'edge') {
         // Edge TTS via endpoint público
-        audioUrl = `https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?voice=${voice.id}&text=${encodeURIComponent(voice.previewText)}`;
+        audioUrl = EDGE_SYNTHESIZE(voice.id, voice.previewText);
       } else {
         // Web Speech API - criamos um blob via MediaRecorder (mais complexo)
         // Para simplicidade, usamos o endpoint do Edge mesmo para Web Speech
-        audioUrl = `https://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?voice=pt-BR-ThalitaMultilingualNeural&text=${encodeURIComponent(voice.previewText)}`;
+        audioUrl = EDGE_SYNTHESIZE('pt-BR-ThalitaMultilingualNeural', voice.previewText);
       }
 
       const audio = new Audio(audioUrl);
@@ -117,7 +115,7 @@ export function VoicePreviewPage() {
       };
 
       await audio.play();
-    } catch (err) {
+    } catch {
       setError('Erro ao carregar áudio.');
       setLoading(null);
     }
@@ -172,7 +170,7 @@ export function VoicePreviewPage() {
               {VOICES.find(v => v.id === selectedVoice)?.name}
             </p>
             <div className="mt-4 flex gap-3 justify-center">
-              <Button variant="outline" onClick={stopAll}>
+              <Button variant="secondary" onClick={stopAll}>
                 <Pause size={16} /> Parar
               </Button>
               <Button onClick={() => alert('Configuração salva! A LIA usará esta voz.')}>
@@ -218,7 +216,7 @@ function VoiceCard({
     >
       {voice.recommended && (
         <span className="absolute -top-2 -right-2 flex items-center gap-1 px-2 py-0.5 bg-accent text-accent-foreground text-[10px] font-medium rounded-full">
-          <Star size={10} fill={currentColor} /> Recomendada
+          <Star size={10} fill="currentColor" /> Recomendada
         </span>
       )}
 
@@ -244,8 +242,9 @@ function VoiceCard({
         <button
           onClick={(e) => { e.stopPropagation(); onPlay(); }}
           disabled={isLoading}
-          className="flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2
-            ${isPlaying ? 'bg-accent text-accent-foreground' : 'bg-muted hover:bg-muted/80'}"
+          className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+            isPlaying ? 'bg-accent text-accent-foreground' : 'bg-muted hover:bg-muted/80'
+          }`}
         >
           {isLoading ? (
             <>
@@ -272,4 +271,3 @@ function VoiceCard({
   );
 }
 
-import { useRef } from 'react';
